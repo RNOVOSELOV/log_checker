@@ -134,6 +134,7 @@
   <ItemGroup>
     <ClCompile Include="consoleView.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="negativeLogsCheckerModel.cpp" />
     <ClCompile Include="presenter.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -142,6 +143,7 @@
     <ClInclude Include="iviewEvents.h" />
     <ClInclude Include="iview.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="negativeLogsCheckerModel.h" />
     <ClInclude Include="presenter.h" />
     <ClInclude Include="viewEventsNotifier.h" />
   </ItemGroup>

@@ -113,8 +113,8 @@ void Model::readLogFile(const filesystem::path& inputFile, const filesystem::pat
 	bool writeToFileFlag = false;
 	for (; getline(rstream, s);)
 	{
-		auto parceLineResult{ validationLine(s) };
-		if (parceLineResult == LineRegExpStatus::firstLineLogMessage)
+		auto parceLineResult{ validateLine(s) };
+		if (parceLineResult == LineRegExpStatus::startWrite)
 		{
 			writeToFileFlag = true;
 		}
@@ -122,7 +122,7 @@ void Model::readLogFile(const filesystem::path& inputFile, const filesystem::pat
 		{
 			writeOutputLogFile(outputFile, s);
 		}
-		if (parceLineResult == LineRegExpStatus::emptyLine)
+		if (parceLineResult == LineRegExpStatus::endWrite)
 		{
 			writeToFileFlag = false;
 		}
@@ -139,20 +139,4 @@ void Model::writeOutputLogFile(const filesystem::path& output, const string& lin
 	ofstream wstream{ output.c_str(), ios_base::app};
 	wstream << line << endl;
 	wstream.close();
-}
-
-LineRegExpStatus Model::validationLine(const std::string& line)
-{
-	regex firstLogLine{ "\\s*\\[[EROWARNIG]*\\]\\s+[\\w\\W]*" };
-	regex emptyString{ "^\\s*$" };
-
-	if (regex_match(line, firstLogLine))
-	{
-		return LineRegExpStatus::firstLineLogMessage;
-	}
-	else if (regex_match(line, emptyString))
-	{
-		return LineRegExpStatus::emptyLine;
-	}
-	return LineRegExpStatus::anotherLineLogMessage;
 }

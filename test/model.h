@@ -6,9 +6,9 @@
 #include <string>
 
 enum class LineRegExpStatus {
-	firstLineLogMessage,
-	anotherLineLogMessage,
-	emptyLine
+	startWrite,
+	endWrite,
+	continueLastAction,
 };
 
 using namespace std;
@@ -17,7 +17,7 @@ class Model
 {
 public:
 	Model();
-	~Model();
+	virtual ~Model();
 
 	std::string getInputDirectoryName() { return inputPath.u8string(); }
 	std::string getOutputDirectoryName() { return outputPath.u8string(); }
@@ -31,6 +31,9 @@ public:
 	void startScan();
 	bool cleanOutput();
 
+protected:
+	virtual LineRegExpStatus validateLine(const std::string&) = 0;
+
 private:
 	std::filesystem::path inputPath;
 	std::filesystem::path outputPath;
@@ -41,5 +44,4 @@ private:
 	string makeOutputDirectorySuffixPath(string, const size_t);
 	void readLogFile(const filesystem::path&, const filesystem::path&);
 	void writeOutputLogFile(const filesystem::path&, const string&);
-	LineRegExpStatus validationLine(const std::string&);
 };

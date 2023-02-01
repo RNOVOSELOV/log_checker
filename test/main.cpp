@@ -1,7 +1,7 @@
 #include <iostream>
 #include "consoleView.h"
 #include "presenter.h"
-#include "model.h"
+#include "negativeLogsCheckerModel.h"
 
 int main(int argc, char * argv[])
 {
@@ -12,7 +12,7 @@ int main(int argc, char * argv[])
         return 1;
     }
 
-	auto model{ make_shared<Model>() };
+	auto model{ make_shared<NegativeLogsCheckerModel>() };
 	for (int i = 1; i < argc; ++i)
 	{
 		string value = *(argv + i);
