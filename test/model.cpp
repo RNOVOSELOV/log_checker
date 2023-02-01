@@ -2,7 +2,6 @@
 #include <fstream>
 #include <regex>
 #include <string>
-#include <iostream>
 #include "model.h"
 
 Model::Model()
@@ -16,7 +15,7 @@ Model::~Model()
 }
 
 
-bool Model::setInputFilesDirectory(string directory)
+bool Model::setInputFilesDirectory(const string& directory)
 {
 	const std::filesystem::path sourcesDirectory{ directory };
 	if (isValidPath(sourcesDirectory, true))
@@ -27,12 +26,13 @@ bool Model::setInputFilesDirectory(string directory)
 	return false;
 }
 
-bool Model::setOutputFilesDirectory(string directory)
+bool Model::setOutputFilesDirectory(const string& directory)
 {
 	const std::filesystem::path sourcesDirectory{ directory };
 	if (isValidPath(sourcesDirectory, true))
 	{
 		outputPath = canonical(sourcesDirectory);
+		outputPath.append("output");
 		return true;
 	}
 	return false;
@@ -53,74 +53,106 @@ bool Model::isValidPath(const std::filesystem::path& p, bool checkIsDirectory)
 
 bool Model::inputDirectoryIsValid()
 {
-	return !inputPath.u8string().empty();
+	return !inputPath.empty();
 }
 
 bool Model::outputDirectoryIsValid()
 {
-	cout << outputPath.u8string() << endl;
-	return !outputPath.u8string().empty();
+	return !outputPath.empty();
 }
 
 bool Model::cleanOutput()
 {
-	// TODO delete output directory
-	cout << "clean" << endl;
+	if (filesystem::exists(outputPath))
+	{
+		filesystem::remove_all(outputPath);
+	}
 	return true;
 }
 
 void Model::startScan()
 {
-	cout << "Start scan " << endl;
+	cleanOutput();
+	filesystem::create_directory(outputPath);
 	startExploreDirectory();
 }
 
 void Model::startExploreDirectory()
 {
+	auto basePathString{ inputPath.u8string() };
+	auto basePathLength { basePathString.length() };
+
 	for (filesystem::directory_entry entry : filesystem::recursive_directory_iterator(inputPath))
 	{
 		if (entry.is_regular_file())
 		{
-			auto p{ entry.path() };
-			cout << p.u8string() << endl;
-			///	makeRootTreeNode(p);
+			auto currentPathString { entry.path().u8string() };
+			auto pos{ currentPathString.find(basePathString) };
+			auto additionalPath{ currentPathString.substr(pos + basePathLength + 1) };
+			auto suffix{ makeOutputDirectorySuffixPath(additionalPath, additionalPath.length() - 1) };
+			filesystem::path newPath{ outputPath };
+			newPath.append(suffix);
+			readLogFile(entry.path(), newPath);
 		}
-		else if (entry.is_directory())
+	}
+}
+
+string Model::makeOutputDirectorySuffixPath(string additionalPath, const size_t lastSym)
+{
+	auto pos{ additionalPath.find_last_of(filesystem::path::preferred_separator, lastSym) };
+	if (pos == string::npos)
+		return additionalPath;
+	additionalPath.insert(pos, "_output");
+	return makeOutputDirectorySuffixPath(additionalPath, pos);
+}
+
+void Model::readLogFile(const filesystem::path& inputFile, const filesystem::path& outputFile)
+{
+	ifstream rstream{ inputFile.c_str() };
+	string s;
+	bool writeToFileFlag = false;
+	for (; getline(rstream, s);)
+	{
+		auto parceLineResult{ validationLine(s) };
+		if (parceLineResult == LineRegExpStatus::firstLineLogMessage)
 		{
-			// TODO Create directory
+			writeToFileFlag = true;
+		}
+		if (writeToFileFlag)
+		{
+			writeOutputLogFile(outputFile, s);
+		}
+		if (parceLineResult == LineRegExpStatus::emptyLine)
+		{
+			writeToFileFlag = false;
 		}
 	}
+	rstream.close();
 }
 
-std::pair <LineRegExpStatus, std::string> Model::validationAndParcingHeaderLine(std::string line)
+void Model::writeOutputLogFile(const filesystem::path& output, const string& line)
 {
-	string languageSpecificIncludeSubline;
-	regex directiveRegEx{ "\\s*\\#[\\w\\W]*" };
-	regex includeRegEx{ "\\s*" + languageSpecificIncludeSubline + "\\s*<[a-zA-Z0-9]+[.]?[h]?>\\s*" };
-	regex localRegEx{ "\\s*" + languageSpecificIncludeSubline + "\\s*\"[a-zA-Z0-9]+[.]?[h]?\"\\s*" };
+	if (!isValidPath(output.parent_path(), false))
+	{
+		filesystem::create_directories(output.parent_path());
+	}
+	ofstream wstream{ output.c_str(), ios_base::app};
+	wstream << line << endl;
+	wstream.close();
+}
+
+LineRegExpStatus Model::validationLine(const std::string& line)
+{
+	regex firstLogLine{ "\\s*\\[[EROWARNIG]*\\]\\s+[\\w\\W]*" };
 	regex emptyString{ "^\\s*$" };
-	regex commentedLineRegEx{ "\\s*\\/\\/\\s*[\\w\\W]*" };
 
-	if (regex_match(line, includeRegEx))
+	if (regex_match(line, firstLogLine))
 	{
-		return pair(LineRegExpStatus::validIncludeHeader, getHeaderFileName(line, '<', '>'));
+		return LineRegExpStatus::firstLineLogMessage;
 	}
-	else if (regex_match(line, localRegEx))
+	else if (regex_match(line, emptyString))
 	{
-		return pair(LineRegExpStatus::validLocalHeader, getHeaderFileName(line, '\"', '\"'));
+		return LineRegExpStatus::emptyLine;
 	}
-	else if (regex_match(line, emptyString) || regex_match(line, directiveRegEx) || regex_match(line, commentedLineRegEx))
-	{
-		return pair(LineRegExpStatus::skipHeaderLine, "");
-	}
-	return pair(LineRegExpStatus::invalidHeader, "");
-}
-
-string Model::getHeaderFileName(const string rawHeader, const char firstSymbol, const char secondSymbol)
-{
-	auto it1 = rawHeader.find_first_of(firstSymbol) + 1;
-	auto it2 = rawHeader.find_first_of(secondSymbol, it1);
-	string str2(it2 - it1, '\0');
-	copy(rawHeader.begin() + it1, rawHeader.begin() + it2, str2.begin());
-	return str2;
+	return LineRegExpStatus::anotherLineLogMessage;
 }

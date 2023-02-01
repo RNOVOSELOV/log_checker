@@ -28,7 +28,14 @@ void Presenter::onWelcomeKeyPressed(char value)
 	}
 	else if (value == 'c' || value == 'C')
 	{
-		model->cleanOutput();
+		if (model->cleanOutput())
+		{
+			view->showMessage("Output directory empty.");
+		}
+		else
+		{
+			view->showMessage("Error clear output directory.");
+		}
 		view->waitAnotherCommand();
 	}
 	else if (value == 'q' || value == 'Q')

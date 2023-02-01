@@ -6,10 +6,9 @@
 #include <string>
 
 enum class LineRegExpStatus {
-	skipHeaderLine,
-	validLocalHeader,	
-	validIncludeHeader,	
-	invalidHeader	
+	firstLineLogMessage,
+	anotherLineLogMessage,
+	emptyLine
 };
 
 using namespace std;
@@ -23,30 +22,14 @@ public:
 	std::string getInputDirectoryName() { return inputPath.u8string(); }
 	std::string getOutputDirectoryName() { return outputPath.u8string(); }
 
-	bool setInputFilesDirectory(std::string);
-	bool setOutputFilesDirectory(std::string);
+	bool setInputFilesDirectory(const std::string&);
+	bool setOutputFilesDirectory(const std::string&);
 
 	bool inputDirectoryIsValid();
 	bool outputDirectoryIsValid();
 
 	void startScan();
 	bool cleanOutput();
-
-
-	
-	
-	
-	
-
-protected:
-	/// <summary>
-	/// //////////
-	/// </summary>
-	/// <param name="line"></param>
-	/// <returns></returns>
-	virtual std::pair <LineRegExpStatus, std::string> validationAndParcingHeaderLine(std::string line);	// Парсинг строки из хедера на отсновании регулярки
-
-
 
 private:
 	std::filesystem::path inputPath;
@@ -55,10 +38,8 @@ private:
 	bool isValidPath(const std::filesystem::path& p, bool checkIsDirectory);
 	void startExploreDirectory();
 
-
-	////////////////////
-	string getHeaderFileName(const string rawHeader, const char firstSymbol, const char secondSymbol);
-				// Обход файлов
-
-
+	string makeOutputDirectorySuffixPath(string, const size_t);
+	void readLogFile(const filesystem::path&, const filesystem::path&);
+	void writeOutputLogFile(const filesystem::path&, const string&);
+	LineRegExpStatus validationLine(const std::string&);
 };
