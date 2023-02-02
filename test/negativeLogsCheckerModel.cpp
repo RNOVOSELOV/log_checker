@@ -14,8 +14,9 @@ NegativeLogsCheckerModel::~NegativeLogsCheckerModel()
 
 LineRegExpStatus NegativeLogsCheckerModel::validateLine(const std::string& line)
 {
-	regex startWritingRegexp{ "\\s*\\[[EROWARNIG]*\\]\\s+[\\w\\W]*" };
+	regex startWritingRegexp{ "\\s*\\[[EROWARNIG]*\\]\\s+[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]\\+[0-9][0-9]:[0-9][0-9]\\s*" }; 
 	regex endWritingRegexp{ "^\\s*$" };
+	regex logFormatValidatorRegexp{ "\\s*\\[[EROWANIGFDBU]*\\]\\s+[0-9][0-9]:[0-9][0-9]:[0-9][0-9].[0-9][0-9][0-9]\\+[0-9][0-9]:[0-9][0-9]\\s*" };
 
 	if (regex_match(line, startWritingRegexp))
 	{
@@ -23,7 +24,11 @@ LineRegExpStatus NegativeLogsCheckerModel::validateLine(const std::string& line)
 	}
 	else if (regex_match(line, endWritingRegexp))
 	{
-		return LineRegExpStatus::endWrite;
+		return LineRegExpStatus::logDelimeter;
+	}
+	else if (regex_match(line, logFormatValidatorRegexp))
+	{
+		return LineRegExpStatus::trueLogFormat;
 	}
 	return LineRegExpStatus::continueLastAction;
 }

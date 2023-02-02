@@ -7,7 +7,8 @@
 
 enum class LineRegExpStatus {
 	startWrite,
-	endWrite,
+	logDelimeter,
+	trueLogFormat,
 	continueLastAction,
 };
 

@@ -156,21 +156,34 @@ int Model::readLogFile(const filesystem::path& inputFile, const filesystem::path
 	string s;
 	bool writeToFileFlag = false;
 	int count = 0;
+	bool needCheckLogFormat = true;
 	for (; getline(rstream, s);)
 	{
 		auto parceLineResult{ validateLine(s) };
 		if (parceLineResult == LineRegExpStatus::startWrite)
 		{
+			needCheckLogFormat = false;
 			writeToFileFlag = true;
 			count++;
 		}
+		else if (needCheckLogFormat && parceLineResult == LineRegExpStatus::trueLogFormat)
+		{
+			needCheckLogFormat = false;
+		}
+		else if (needCheckLogFormat)
+		{
+			cout << "Log format error: " << s << endl;
+			needCheckLogFormat = false;
+		}
+
 		if (writeToFileFlag)
 		{
 			writeOutputLogFile(outputFile, s);
 		}
-		if (parceLineResult == LineRegExpStatus::endWrite)
+		if (parceLineResult == LineRegExpStatus::logDelimeter)
 		{
 			writeToFileFlag = false;
+			needCheckLogFormat = true;
 		}
 	}
 	rstream.close();
