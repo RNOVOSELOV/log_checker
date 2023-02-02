@@ -23,7 +23,7 @@ int main(int argc, char * argv[])
 			auto isValid{ model->setInputFilesDirectory(directory) };
 			if (!isValid)
 			{
-				view->showMessage("WARNING! Input directory not exist.\n");
+				view->showMessage("Error! Input directory not exist.\n");
 				return 2;
 			}
 		}
@@ -33,7 +33,7 @@ int main(int argc, char * argv[])
 			auto isValid{ model->setOutputFilesDirectory(directory) };
 			if (!isValid)
 			{
-				view->showMessage("WARNING! Output directory not exist.\n");
+				view->showMessage("Error! Output directory not exist.\n");
 				return 3;
 			}
 		}

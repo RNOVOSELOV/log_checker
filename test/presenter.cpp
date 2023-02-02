@@ -49,6 +49,6 @@ void Presenter::onWelcomeKeyPressed(char value)
 	else
 	{
 		view->showMessage("Unrecognized command!");
-		view->waitAnotherCommand();
+		view->showHelp();
 	}
 }
