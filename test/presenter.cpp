@@ -24,14 +24,14 @@ void Presenter::onWelcomeKeyPressed(char value)
 	if (value == 'S' || value == 's')
 	{
 		int count = model->startScan();
-		view->showMessage("Scan finished." + std::to_string(count) + " error messages found.");
+		view->showMessage("Scan finished. " + std::to_string(count) + " error messages are copied.");
 		view->waitAnotherCommand();
 	}
 	else if (value == 'c' || value == 'C')
 	{
 		if (model->cleanOutput())
 		{
-			view->showMessage("Output directory empty.");
+			view->showMessage("Output directory is removed.");
 		}
 		else
 		{

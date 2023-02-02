@@ -8,7 +8,7 @@ ConsoleView::~ConsoleView()
 
 void ConsoleView::showWelcome(const string input, const string output)
 {
-	cout << "Welcome to log explorer!\nInput directory: \"" << input << "\"; output directory: \"" + output + "\".\n>>";
+	cout << "Welcome to log explorer!\nInput directory: \"" << input << "\"; output directory: \"" + output + "\".\n\n>>";
 	showHelp();
 }
 

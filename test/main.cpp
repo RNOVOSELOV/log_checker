@@ -5,6 +5,7 @@
 
 int main(int argc, char * argv[])
 {
+	setlocale(LC_ALL, "Russian");
 	shared_ptr<IView> view = make_shared <ConsoleView>();
     if (argc <= 1 || argc > 5)
     {

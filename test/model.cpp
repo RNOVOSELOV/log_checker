@@ -20,7 +20,15 @@ bool Model::setInputFilesDirectory(const string& directory)
 	const std::filesystem::path sourcesDirectory{ directory };
 	if (isValidPath(sourcesDirectory, true))
 	{
-		inputPath = canonical(sourcesDirectory);
+		try
+		{
+			inputPath = canonical(sourcesDirectory);
+		}
+		catch (const std::filesystem::filesystem_error& error)
+		{
+			cerr << "Error set input directory. Filesystem error! Code: " << error.code() << "; description: " << error.what() << endl;
+			return false;
+		}
 		return true;
 	}
 	return false;
@@ -31,7 +39,15 @@ bool Model::setOutputFilesDirectory(const string& directory)
 	const std::filesystem::path sourcesDirectory{ directory };
 	if (isValidPath(sourcesDirectory, true))
 	{
-		outputPath = canonical(sourcesDirectory);
+		try
+		{
+			outputPath = canonical(sourcesDirectory);
+		}
+		catch (const std::filesystem::filesystem_error& error)
+		{
+			cerr << "Error set output directory. Filesystem error! Code: " << error.code() << "; description: " << error.what() << endl;
+			return false;
+		}
 		outputPath.append("output");
 		return true;
 	}
@@ -65,7 +81,15 @@ bool Model::cleanOutput()
 {
 	if (filesystem::exists(outputPath))
 	{
-		filesystem::remove_all(outputPath);
+		try
+		{
+			filesystem::remove_all(outputPath);
+		}
+		catch (const std::filesystem::filesystem_error& error)
+		{
+			cerr << "Error clean output directory. Filesystem error! Code: " << error.code() << "; description: " << error.what() << endl;
+			return false;
+		}
 	}
 	return true;
 }
@@ -73,7 +97,15 @@ bool Model::cleanOutput()
 int Model::startScan()
 {
 	cleanOutput();
-	filesystem::create_directory(outputPath);
+	try
+	{
+		filesystem::create_directory(outputPath);
+	}
+	catch (const std::filesystem::filesystem_error& error)
+	{
+		cerr << "Error create output directory. Filesystem error! Code: " << error.code() << "; description: " << error.what() << endl;
+		return 0;
+	}
 	return startExploreDirectory();
 }
 
@@ -84,15 +116,26 @@ int Model::startExploreDirectory()
 	int count = 0;
 	for (filesystem::directory_entry entry : filesystem::recursive_directory_iterator(inputPath))
 	{
-		if (entry.is_regular_file())
+		try
 		{
-			auto currentPathString { entry.path().u8string() };
-			auto pos{ currentPathString.find(basePathString) };
-			auto additionalPath{ currentPathString.substr(pos + basePathLength + 1) };
-			auto suffix{ makeOutputDirectorySuffixPath(additionalPath, additionalPath.length() - 1) };
-			filesystem::path newPath{ outputPath };
-			newPath.append(suffix);
-			count += readLogFile(entry.path(), newPath);
+			if (entry.is_regular_file())
+			{
+				auto currentPathString{ entry.path().u8string() };
+				auto pos{ currentPathString.find(basePathString) };
+				auto additionalPath{ currentPathString.substr(pos + basePathLength + 1) };
+				auto suffix{ makeOutputDirectorySuffixPath(additionalPath, additionalPath.length() - 1) };
+				filesystem::path newPath{ outputPath };
+				newPath.append(suffix);
+				count += readLogFile(entry.path(), newPath);
+			}
+		}
+		catch (const std::filesystem::filesystem_error& error)
+		{
+			cerr << "Error process input file \"" << entry.path() << "\". Filesystem error! Code: " << error.code() << "; description: " << error.what() << endl;
+		}
+		catch (const std::bad_alloc& error)
+		{
+			cerr << "Error process input file \"" << entry.path() << "\". Failure to allocate storage! Description: " << error.what() << endl;
 		}
 	}
 	return count;
