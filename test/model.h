@@ -28,7 +28,7 @@ public:
 	bool inputDirectoryIsValid();
 	bool outputDirectoryIsValid();
 
-	void startScan();
+	int startScan();
 	bool cleanOutput();
 
 protected:
@@ -39,9 +39,9 @@ private:
 	std::filesystem::path outputPath;
 
 	bool isValidPath(const std::filesystem::path& p, bool checkIsDirectory);
-	void startExploreDirectory();
+	int startExploreDirectory();
 
 	string makeOutputDirectorySuffixPath(string, const size_t);
-	void readLogFile(const filesystem::path&, const filesystem::path&);
+	int readLogFile(const filesystem::path&, const filesystem::path&);
 	void writeOutputLogFile(const filesystem::path&, const string&);
 };

@@ -70,18 +70,18 @@ bool Model::cleanOutput()
 	return true;
 }
 
-void Model::startScan()
+int Model::startScan()
 {
 	cleanOutput();
 	filesystem::create_directory(outputPath);
-	startExploreDirectory();
+	return startExploreDirectory();
 }
 
-void Model::startExploreDirectory()
+int Model::startExploreDirectory()
 {
 	auto basePathString{ inputPath.u8string() };
 	auto basePathLength { basePathString.length() };
-
+	int count = 0;
 	for (filesystem::directory_entry entry : filesystem::recursive_directory_iterator(inputPath))
 	{
 		if (entry.is_regular_file())
@@ -92,9 +92,10 @@ void Model::startExploreDirectory()
 			auto suffix{ makeOutputDirectorySuffixPath(additionalPath, additionalPath.length() - 1) };
 			filesystem::path newPath{ outputPath };
 			newPath.append(suffix);
-			readLogFile(entry.path(), newPath);
+			count += readLogFile(entry.path(), newPath);
 		}
 	}
+	return count;
 }
 
 string Model::makeOutputDirectorySuffixPath(string additionalPath, const size_t lastSym)
@@ -106,17 +107,19 @@ string Model::makeOutputDirectorySuffixPath(string additionalPath, const size_t 
 	return makeOutputDirectorySuffixPath(additionalPath, pos);
 }
 
-void Model::readLogFile(const filesystem::path& inputFile, const filesystem::path& outputFile)
+int Model::readLogFile(const filesystem::path& inputFile, const filesystem::path& outputFile)
 {
 	ifstream rstream{ inputFile.c_str() };
 	string s;
 	bool writeToFileFlag = false;
+	int count = 0;
 	for (; getline(rstream, s);)
 	{
 		auto parceLineResult{ validateLine(s) };
 		if (parceLineResult == LineRegExpStatus::startWrite)
 		{
 			writeToFileFlag = true;
+			count++;
 		}
 		if (writeToFileFlag)
 		{
@@ -128,6 +131,7 @@ void Model::readLogFile(const filesystem::path& inputFile, const filesystem::pat
 		}
 	}
 	rstream.close();
+	return count;
 }
 
 void Model::writeOutputLogFile(const filesystem::path& output, const string& line)

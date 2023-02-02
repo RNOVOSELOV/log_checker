@@ -5,10 +5,10 @@
 ## О проекте
 
 ПО написано с применением архитектурного паттерна Model-View-Presenter. 
-UML диаграмма классов представлена ниже, либо [открыть в большом размере (SVG)](https://raw.githubusercontent.com/RNOVOSELOV/sources_analyzer/main/images/UML.svg).
+UML диаграмма классов представлена ниже, либо [открыть в большом размере (SVG)](https://raw.githubusercontent.com/RNOVOSELOV/log_checker/main/images/UML.svg).
 
 <p align="center">
-  <img src="https://github.com/RNOVOSELOV/sources_analyzer/blob/main/images/UML.svg"/>
+  <img src="https://github.com/RNOVOSELOV/log_checker/blob/main/images/UML.svg"/>
 </p>
 
 Результат работы программы - каталоги с лог файлами, отсортированными по заранее заданным значениям.

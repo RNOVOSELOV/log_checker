@@ -23,7 +23,8 @@ void Presenter::onWelcomeKeyPressed(char value)
 {
 	if (value == 'S' || value == 's')
 	{
-		model->startScan();
+		int count = model->startScan();
+		view->showMessage("Scan finished." + std::to_string(count) + " error messages found.");
 		view->waitAnotherCommand();
 	}
 	else if (value == 'c' || value == 'C')
