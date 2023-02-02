@@ -170,6 +170,10 @@ int Model::readLogFile(const filesystem::path& inputFile, const filesystem::path
 		{
 			needCheckLogFormat = false;
 		}
+		else if (needCheckLogFormat && parceLineResult == LineRegExpStatus::logDelimeter)
+		{
+			continue;
+		}
 		else if (needCheckLogFormat)
 		{
 			cout << "Log format error: " << s << endl;
