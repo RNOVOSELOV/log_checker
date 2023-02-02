@@ -26,7 +26,7 @@ UML диаграмма классов представлена ниже, либ�
 Пример работы программы:
  
 <p align="center">
-  <img src="https://github.com/RNOVOSELOV/log_checker/blob/main/images/result.png" height="300"/>
+  <img src="https://github.com/RNOVOSELOV/log_checker/blob/main/images/result.png"/>
 </p>
 
 Возможные команды:
