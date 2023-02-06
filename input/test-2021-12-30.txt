@@ -1,0 +1,23 @@
+[WARNING 06:20:12.567+05:00
+Background operation finished
+
+[INFO] 06:20:12
+Background operation finished
+
+[WARNING] 06:20:12.567+05:00
+Background operation finished
+
+[INFO] 06:20:12.567+05:00
+Background operation finished
+
+[WARNINGQUIOPKJHG] 06:20:12.567+05:00
+Background operation finished
+
+[()$$] 06:20:12.567+05:00
+Background operation finished
+
+
+
+
+ERROR 06:20:12.567+05:00
+Background operation finished
