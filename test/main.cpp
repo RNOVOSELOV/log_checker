@@ -54,12 +54,7 @@ int main(int argc, char * argv[])
 		view->showMessage("Error! Output directory not exist on filesystem.\n");
 		return 5;
 	}
-
-	cout << "Hello" << endl;
-	unique_ptr presenter = make_unique<Presenter>(move(view), move(model));
+	unique_ptr presenter = make_unique<Presenter>(view, model);
     presenter->startAnalyze();
-
-
-	cout << "Hello" << endl;
     return 0;
 }

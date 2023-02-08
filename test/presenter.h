@@ -6,7 +6,7 @@
 class Presenter:IViewEvents
 {
 public:
-	Presenter(unique_ptr<IView>, unique_ptr<Model>);
+	Presenter(unique_ptr<IView>&, unique_ptr<Model>&);
 	virtual ~Presenter();
 	virtual void onWelcomeKeyPressed(char value);
 	void startAnalyze();
