@@ -6,14 +6,14 @@
 int main(int argc, char * argv[])
 {
 	setlocale(LC_ALL, "Russian");
-	shared_ptr<IView> view = make_shared <ConsoleView>();
+	unique_ptr<IView> view = make_unique <ConsoleView>();
     if (argc <= 1 || argc > 5)
     {
 		view->showMessage("Error! Number of arguments error! Use:\n ./analyser -I [INPUT DIRECTORY] -O [OUTPUT DIRECTORY]\n");
         return 1;
     }
 
-	auto model{ make_shared<NegativeLogsCheckerModel>() };
+	unique_ptr<Model> model = make_unique<NegativeLogsCheckerModel>();
 	for (int i = 1; i < argc; ++i)
 	{
 		string value = *(argv + i);
@@ -55,9 +55,11 @@ int main(int argc, char * argv[])
 		return 5;
 	}
 
-
-	auto presenter{ make_unique<Presenter>(view, model) };
+	cout << "Hello" << endl;
+	unique_ptr presenter = make_unique<Presenter>(move(view), move(model));
     presenter->startAnalyze();
 
+
+	cout << "Hello" << endl;
     return 0;
 }

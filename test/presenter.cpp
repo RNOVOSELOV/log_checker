@@ -2,9 +2,9 @@
 #include "consoleView.h"
 #include <iostream>
 
-Presenter::Presenter(shared_ptr<IView> view, shared_ptr<Model> model)
-	:	view(view),
-		model (model)
+Presenter::Presenter(unique_ptr<IView> view, unique_ptr<Model> model)
+	:	view(std::move(view)),
+		model (std::move(model))
 {
 	this->view->setListener(this);
 }
