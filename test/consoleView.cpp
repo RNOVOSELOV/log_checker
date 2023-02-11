@@ -37,8 +37,3 @@ void ConsoleView::showMessage(const string message)
 {
 	cout << message << endl;
 }
-
-void ConsoleView::executeCommand(char value)
-{
-	notifyPresenter(&IViewEvents::onWelcomeKeyPressed, value);
-}

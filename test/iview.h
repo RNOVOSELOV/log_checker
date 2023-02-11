@@ -14,4 +14,9 @@ public:
 	virtual void showHelp() = 0;
 	virtual void showMessage(const std::string) = 0;
 	virtual void waitAnotherCommand() = 0;
+
+	void executeCommand(char value)
+	{
+		notifyPresenter(&IViewEvents::onWelcomeKeyPressed, value);
+	}
 };

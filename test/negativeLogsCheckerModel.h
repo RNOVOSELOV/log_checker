@@ -1,13 +1,13 @@
 #pragma once
 #include "model.h"
 
-class NegativeLogsCheckerModel :
+class NegativeLogsCheckerModel final :
     public Model
 {
 public:
     NegativeLogsCheckerModel();
     virtual ~NegativeLogsCheckerModel();
 protected:
-    virtual LineRegExpStatus validateLine(const std::string& line);
+    virtual LineRegExpStatus validateLine(const std::string& line) override;
 };
 
