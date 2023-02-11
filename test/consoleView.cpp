@@ -1,6 +1,11 @@
 #include <iostream>
 #include "consoleView.h"
 
+using std::string;
+using std::cout;
+using std::cin;
+using std::endl;
+
 ConsoleView::~ConsoleView()
 {
 

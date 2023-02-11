@@ -5,15 +5,18 @@
 
 int main(int argc, char * argv[])
 {
+	using std::unique_ptr;
+	using std::string;
+
 	setlocale(LC_ALL, "Russian");
-	unique_ptr<IView> view = make_unique <ConsoleView>();
+	unique_ptr<IView> view = std::make_unique <ConsoleView>();
     if (argc <= 1 || argc > 5)
     {
 		view->showMessage("Error! Number of arguments error! Use:\n ./analyser -I [INPUT DIRECTORY] -O [OUTPUT DIRECTORY]\n");
         return 1;
     }
 
-	unique_ptr<Model> model = make_unique<NegativeLogsCheckerModel>();
+	unique_ptr<Model> model = std::make_unique<NegativeLogsCheckerModel>();
 	for (int i = 1; i < argc; ++i)
 	{
 		string value = *(argv + i);
@@ -54,7 +57,7 @@ int main(int argc, char * argv[])
 		view->showMessage("Error! Output directory not exist on filesystem.\n");
 		return 5;
 	}
-	unique_ptr presenter = make_unique<Presenter>(view, model);
+	unique_ptr presenter = std::make_unique<Presenter>(view, model);
     presenter->startAnalyze();
     return 0;
 }

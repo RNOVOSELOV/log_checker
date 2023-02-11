@@ -12,8 +12,6 @@ enum class LineRegExpStatus {
 	continueLastAction,
 };
 
-using namespace std;
-
 class Model
 {
 public:
@@ -42,7 +40,7 @@ private:
 	bool isValidPath(const std::filesystem::path& p, bool checkIsDirectory);
 	int startExploreDirectory();
 
-	string makeOutputDirectorySuffixPath(string, const size_t);
-	int readLogFile(const filesystem::path&, const filesystem::path&);
-	void writeOutputLogFile(const filesystem::path&, const string&);
+	std::string makeOutputDirectorySuffixPath(std::string, const size_t);
+	int readLogFile(const std::filesystem::path&, const std::filesystem::path&);
+	void writeOutputLogFile(const std::filesystem::path&, const std::string&);
 };

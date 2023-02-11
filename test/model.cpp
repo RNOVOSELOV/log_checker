@@ -4,6 +4,12 @@
 #include <string>
 #include "model.h"
 
+using std::string;
+using std::cout;
+using std::cerr;
+using std::endl;
+using namespace std::filesystem;
+
 Model::Model()
 {
 	
@@ -60,7 +66,7 @@ bool Model::isValidPath(const std::filesystem::path& p, bool checkIsDirectory)
 	{
 		return false;
 	}
-	if (checkIsDirectory && !filesystem::is_directory(p))
+	if (checkIsDirectory && !is_directory(p))
 	{
 		return false;
 	}
@@ -79,11 +85,11 @@ bool Model::outputDirectoryIsValid()
 
 bool Model::cleanOutput()
 {
-	if (filesystem::exists(outputPath))
+	if (exists(outputPath))
 	{
 		try
 		{
-			filesystem::remove_all(outputPath);
+			remove_all(outputPath);
 		}
 		catch (const std::filesystem::filesystem_error& error)
 		{
@@ -99,7 +105,7 @@ int Model::startScan()
 	cleanOutput();
 	try
 	{
-		filesystem::create_directory(outputPath);
+		create_directory(outputPath);
 	}
 	catch (const std::filesystem::filesystem_error& error)
 	{
@@ -114,7 +120,7 @@ int Model::startExploreDirectory()
 	auto basePathString{ inputPath.u8string() };
 	auto basePathLength { basePathString.length() };
 	int count = 0;
-	for (filesystem::directory_entry entry : filesystem::recursive_directory_iterator(inputPath))
+	for (directory_entry entry : recursive_directory_iterator(inputPath))
 	{
 		try
 		{
@@ -124,7 +130,7 @@ int Model::startExploreDirectory()
 				auto pos{ currentPathString.find(basePathString) };
 				auto additionalPath{ currentPathString.substr(pos + basePathLength + 1) };
 				auto suffix{ makeOutputDirectorySuffixPath(additionalPath, additionalPath.length() - 1) };
-				filesystem::path newPath{ outputPath };
+				path newPath{ outputPath };
 				newPath.append(suffix);
 				count += readLogFile(entry.path(), newPath);
 			}
@@ -143,16 +149,16 @@ int Model::startExploreDirectory()
 
 string Model::makeOutputDirectorySuffixPath(string additionalPath, const size_t lastSym)
 {
-	auto pos{ additionalPath.find_last_of(filesystem::path::preferred_separator, lastSym) };
+	auto pos{ additionalPath.find_last_of(path::preferred_separator, lastSym) };
 	if (pos == string::npos)
 		return additionalPath;
 	additionalPath.insert(pos, "_output");
 	return makeOutputDirectorySuffixPath(additionalPath, pos);
 }
 
-int Model::readLogFile(const filesystem::path& inputFile, const filesystem::path& outputFile)
+int Model::readLogFile(const path& inputFile, const path& outputFile)
 {
-	ifstream rstream{ inputFile.c_str() };
+	std::ifstream rstream{ inputFile.c_str() };
 	string s;
 	bool writeToFileFlag = false;
 	int count = 0;
@@ -194,13 +200,13 @@ int Model::readLogFile(const filesystem::path& inputFile, const filesystem::path
 	return count;
 }
 
-void Model::writeOutputLogFile(const filesystem::path& output, const string& line)
+void Model::writeOutputLogFile(const path& output, const string& line)
 {
 	if (!isValidPath(output.parent_path(), false))
 	{
-		filesystem::create_directories(output.parent_path());
+		create_directories(output.parent_path());
 	}
-	ofstream wstream{ output.c_str(), ios_base::app};
+	std::ofstream wstream{ output.c_str(), std::ios_base::app};
 	wstream << line << endl;
 	wstream.close();
 }

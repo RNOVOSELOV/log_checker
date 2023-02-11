@@ -2,6 +2,8 @@
 
 #include "regex"
 
+using std::regex;
+
 NegativeLogsCheckerModel::NegativeLogsCheckerModel()
 {
 

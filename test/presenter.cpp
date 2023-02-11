@@ -2,7 +2,7 @@
 #include "consoleView.h"
 #include <iostream>
 
-Presenter::Presenter(unique_ptr<IView>& view, unique_ptr<Model>& model)
+Presenter::Presenter(std::unique_ptr<IView>& view, std::unique_ptr<Model>& model)
 	:	view(std::move(view)),
 		model (std::move(model))
 {
